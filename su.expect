@@ -1,0 +1,15 @@
+#!/usr/bin/expect
+set ROOT_PASSWORD password
+set CURRENT_USER [exec whoami]
+
+spawn whoami
+
+if { [ string equal $CURRENT_USER root ] } {
+
+} else {
+spawn su -
+expect "密码："
+send "$ROOT_PASSWORD\r"
+}
+
+interact
