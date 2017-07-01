@@ -1,5 +1,4 @@
-
-" Modeline and Notes {
+" modeline and Notes {
 " vim: ts=8 sts=2 fdm=marker nowrap
 " vim: set foldmarker={,} foldlevel=0 :
 " }
@@ -10,56 +9,14 @@
     " 打开文件自动跳到上次编辑的位置	
     au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-    set nocompatible " explicitly get out of vi-compatible mode
-    set noexrc " don't use local version of .(g)vimrc, .exrc
     set background=dark " we plan to use a dark background
-    set cpoptions=aABceFsmq
-    "             |||||||||
-    "             ||||||||+-- When joining lines, leave the cursor
-    "             |||||||      between joined lines
-    "             |||||||+-- When a new match is created (showmatch)
-    "             ||||||      pause for .5
-    "             ||||||+-- Set buffer options when entering the
-    "             |||||      buffer
-    "             |||||+-- :write command updates current file name
-    "             ||||+-- Automatically add <CR> to the last line
-    "             |||      when using :@r
-    "             |||+-- Searching continues at the end of the match
-    "             ||      at the cursor position
-    "             ||+-- A backslash has no special meaning in mappings
-    "             |+-- :write updates alternative file name
-    "             +-- :read updates alternative file name
     syntax on " syntax highlighting on
     set helplang=cn
 " }
 
 " General {
     filetype plugin indent on " load filetype plugins/indent settings
-    set autochdir " always switch to the current file directory
-    set backspace=indent,eol,start " make backspace a more flexible
-    set nobackup " make backup files
-"    set backupdir=~/.vim/backup " where to put backup files
-    set clipboard+=unnamed " share windows clipboard
-"    set directory=~/.vim/tmp " directory to place swap files in
-    set fileformats=unix,dos,mac " support all three, in this order
-    set hidden " you can change buffers without saving
-    " (XXX: #VIM/tpope warns the line below could break things)
-    set iskeyword+=_,$,@,%,# " none of these are word dividers
-    "set mouse=a " use mouse everywhere
-    set mouse=
     set noerrorbells " don't make noise
-    set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize,slash,unix,resize
-    set whichwrap=b,s,h,l,<,>,~,[,] " everything wraps
-    "             | | | | | | | | |
-    "             | | | | | | | | +-- "]" Insert and Replace
-    "             | | | | | | | +-- "[" Insert and Replace
-    "             | | | | | | +-- "~" Normal
-    "             | | | | | +-- <Right> Normal and Visual
-    "             | | | | +-- <Left> Normal and Visual
-    "             | | | +-- "l" Normal and Visual (not recommended)
-    "             | | +-- "h" Normal and Visual (not recommended)
-    "             | +-- <Space> Normal and Visual
-    "             +-- <BS> Normal and Visual
     set wildmenu " turn on command line completion wild style
     " ignore these list file extensions
     set wildignore=*.dll,*.o,*.obj,*.bak,*.exe,*.pyc,
@@ -67,7 +24,6 @@
     set wildmode=list:longest " turn on wild mode huge list
     "设置键码超时为100ms，设置映射超时为2000ms
     set timeout timeoutlen=2000 ttimeoutlen=100
-    set tags+=./../tags,./../../tags,./../../../tags,./../../../../tags
 " }
 
 " Vim UI {
@@ -91,7 +47,8 @@ endif
     "set listchars=tab:>-,trail:- " show tabs and trailing
     set matchtime=5 " how many tenths of a second to blink
                      " matching brackets for
-    set nohlsearch " do not highlight searched for phrases
+    "set nohlsearch " do not highlight searched for phrases
+    set hls
     set nostartofline " leave my cursor where it was
     set novisualbell " don't blink
     set number " turn on line numbers
@@ -129,7 +86,6 @@ endif
                           " and let gq format comments
     set ignorecase " case insensitive by default
     set infercase " case inferred by default
-    set nowrap " do not wrap line
     set shiftround " when at 3 spaces, and I hit > ... go to 4, not 5
     set smartcase " if there are caps, go case-sensitive
     set shiftwidth=4 " auto-indent amount when using cindent,
@@ -253,13 +209,20 @@ endif
     " }
 
     " 实现了CTRL-C、CTRL-V复制粘贴，CTRL-S保存操作的映射 {
-    vnoremap <c-c> "+y
-    inoremap <c-v> <esc>"+p<CR>i
+    set pastetoggle=<F10>
+    inoremap <C-v> <F10><C-r>+<F10>
+    vnoremap <C-c> "+y
     imap <c-s> <Esc>:w<CR>
-	" }
 
-    " F12取消高亮 {
+    "vnoremap <c-c> "+y
+    "inoremap <c-v> <esc>"+p<CR>i
+    "imap <c-s> <Esc>:w<CR>
+    " }
+
+    " F12或,回车 取消高亮 {
     map <silent> <F12> :nohlsearch<CR>
+    " Disable highlight when <leader><cr> is pressed
+    map <silent> <leader><cr> :noh<cr>
     " }
 
     " 使用CTRL+[hjkl]在窗口间导航 map <C-j> <C-W>j {
@@ -307,6 +270,7 @@ endif
 	" }
 
     " taglist plugin maps {
+    set tags+=./../tags,./../../tags,./../../../tags,./../../../../tags
     nnoremap <leader>tl :TlistToggle<CR>
 	" }
 
@@ -325,11 +289,6 @@ endif
     nnoremap <leader>//   i/* [ jcli : <c-r>=strftime("%Y-%m-%d %H:%M:%S")<cr> ]  */<left><left><left>
 	" }
     
-    " freepbx {
-    nnoremap ,fr oecho "\n[]".__FILE__.":".__LINE__.":\n";<LEFT><LEFT><LEFT><LEFT>
-    nnoremap ,ftag :set tags=/usr/local/src/freepbx-2.9.0/tags<CR>
-        " } 
-
     " 在当前目录加载或卸载tags文件 {
    	" cta 加载tags
    	" ctd 卸载tags
@@ -359,35 +318,48 @@ endif
    	endfunction
    		" }
 
-    " 根据状态改变光标颜色 {
-"    let color_normal = 'HotPink'
-"    let color_insert = 'RoyalBlue1'
-"    let color_exit = 'green'
-"    if &term =~ 'xterm\|rxvt'
-"      exe 'silent !echo -ne "\e]12;"' . shellescape(color_normal, 1) . '"\007"'
-"      let &t_SI="\e]12;" . color_insert . "\007"
-"      let &t_EI="\e]12;" . color_normal . "\007"
-"      exe 'autocmd VimLeave * :silent !echo -ne "\e]12;"' . shellescape(color_exit, 1) . '"\007"'
-"    elseif &term =~ "screen"
-"      if exists('$TMUX')
-"	if &ttymouse == 'xterm'
-"		set ttymouse=xterm2
-"	endif
-"	exe 'silent !echo -ne "\033Ptmux;\033\e]12;"' . shellescape(color_normal, 1) . '"\007\033\\"'
-"	let &t_SI="\033Ptmux;\033\e]12;" . color_insert . "\007\033\\"
-"	let &t_EI="\033Ptmux;\033\e]12;" . color_normal . "\007\033\\"
-"	exe 'autocmd VimLeave * :silent !echo -ne "\033Ptmux;\033\e]12;"' . shellescape(color_exit, 1) . '"\007\033\\"'
-"      elseif !exists('$SUDO_UID') " or it may still be in tmux
-"	exe 'silent !echo -ne "\033P\e]12;"' . shellescape(color_normal, 1) . '"\007\033\\"'
-"	let &t_SI="\033P\e]12;" . color_insert . "\007\033\\"
-"	let &t_EI="\033P\e]12;" . color_normal . "\007\033\\"
-"	exe 'autocmd VimLeave * :silent !echo -ne "\033P\e]12;"' . shellescape(color_exit, 1) . '"\007\033\\"'
-"      endif
-"    endif
-"    unlet color_normal
-"    unlet color_insert
-"    unlet color_exit
-"   		" }
+"
+" }
+"
+" {
+"
+
+nnoremap <silent> <Leader>f :call Gather(input("Search for: "))<CR>
+nnoremap <silent> <Leader>F :call Gather(@/)<CR>
+nnoremap <silent> <Leader><Esc> :call CloseScratch()<CR>
+
+" Gather search hits, and display in a new scratch buffer.
+" see http://vim.wikia.com/wiki/Filter_buffer_on_a_search_result
+function! Gather(pattern)
+  if !empty(a:pattern)
+    let save_cursor = getpos(".")
+    let orig_ft = &ft
+    " append search hits to results list
+    let results = []
+    execute "g/" . a:pattern . "/call add(results, getline('.'))"
+    call setpos('.', save_cursor)
+    if !empty(results)
+      " put list in new scratch buffer
+      new
+      setlocal buftype=nofile bufhidden=hide noswapfile
+      execute "setlocal filetype=".orig_ft
+      call append(1, results)
+      " delete initial blank line
+      silent 1d
+    endif
+  endif
+endfunction
+
+" Delete the current buffer if it is a scratch buffer (any changes are lost).
+function! CloseScratch()
+  if &buftype == "nofile" && &bufhidden == "hide" && !&swapfile
+    " this is a scratch buffer
+    bdelete
+    return 1
+  endif
+  return 0
+endfunction
+
 "
 " }
 
