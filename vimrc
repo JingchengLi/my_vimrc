@@ -208,11 +208,48 @@ endif
     "zM 关闭所有可折叠区域
     " }
 
+    " :W sudo saves the file 
+    " (useful for handling the permission-denied error) {
+    command W w !sudo tee % > /dev/null
+    " }
+
+
     " 实现了CTRL-C、CTRL-V复制粘贴，CTRL-S保存操作的映射 {
     set pastetoggle=<F10>
     inoremap <C-v> <F10><C-r>+<F10>
-    vnoremap <C-c> "+y
     imap <c-s> <Esc>:w<CR>
+    vnoremap <C-c> "+y
+    cnoremap <C-v> <C-r>"
+    " cno即cnoremap缩写
+    cno $q <C-\>eDeleteTillSlash()<cr>
+
+    " Bash like keys for the command line
+    cnoremap <C-A>		<Home>
+    cnoremap <C-E>		<End>
+    cnoremap <C-K>		<C-U>
+
+    cnoremap <C-P> <Up>
+    cnoremap <C-N> <Down>
+
+    func! DeleteTillSlash()
+        let g:cmd = getcmdline()
+
+        if has("win16") || has("win32")
+            let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\]\\).*", "\\1", "")
+        else
+            let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*", "\\1", "")
+        endif
+
+        if g:cmd == g:cmd_edited
+            if has("win16") || has("win32")
+                let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\\]\\).*\[\\\\\]", "\\1", "")
+            else
+                let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
+            endif
+        endif   
+
+        return g:cmd_edited
+    endfunc
 
     "vnoremap <c-c> "+y
     "inoremap <c-v> <esc>"+p<CR>i
