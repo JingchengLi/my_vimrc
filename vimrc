@@ -33,7 +33,7 @@ if has("autocmd")
   au VimLeave * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape ibeam"
 endif
     colorscheme molokai
-    set cursorcolumn " highlight the current column
+    "set cursorcolumn " highlight the current column
     set cursorline " highlight current line
 
     set incsearch " BUT do highlight as you type you
