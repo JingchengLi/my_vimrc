@@ -27,12 +27,7 @@
 " }
 
 " Vim UI {
-if has("autocmd")
-  au InsertEnter * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape ibeam"
-  au InsertLeave * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape block"
-  au VimLeave * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape ibeam"
-endif
-    colorscheme molokai
+    "colorscheme molokai
     "set cursorcolumn " highlight the current column
     set cursorline " highlight current line
 
@@ -86,6 +81,7 @@ endif
                           " and let gq format comments
     set ignorecase " case insensitive by default
     set infercase " case inferred by default
+    set nowrap " do not wrap line
     set shiftround " when at 3 spaces, and I hit > ... go to 4, not 5
     set smartcase " if there are caps, go case-sensitive
     set shiftwidth=4 " auto-indent amount when using cindent,
@@ -214,12 +210,28 @@ endif
     " }
 
 
+    set paste
     " 实现了CTRL-C、CTRL-V复制粘贴，CTRL-S保存操作的映射 {
     set pastetoggle=<F10>
-    inoremap <C-v> <F10><C-r>+<F10>
-    imap <c-s> <Esc>:w<CR>
-    vnoremap <C-c> "+y
-    cnoremap <C-v> <C-r>"
+
+
+if has("unix")
+    let s:uname = system("uname")
+    if s:uname == "Darwin\n"
+        " for mac os
+        set clipboard=unnamed
+        vmap y :w !pbcopy<CR><CR>
+        nmap yy :.w !pbcopy<CR><CR>
+        nmap p :r !pbpaste<CR><CR>
+    else
+        " for linux
+        inoremap <c-v> <C-r>+
+        imap <c-s> <Esc>:w<CR>
+        vnoremap <C-c> "+y
+        cnoremap <C-v> <C-r>"
+    endif
+endif
+
     " cno即cnoremap缩写
     cno $q <C-\>eDeleteTillSlash()<cr>
 
