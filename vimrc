@@ -210,27 +210,25 @@
     " }
 
 
-    set paste
     " 实现了CTRL-C、CTRL-V复制粘贴，CTRL-S保存操作的映射 {
     set pastetoggle=<F10>
 
+    if has("unix")
+        let s:uname = system("uname")
+        if s:uname == "Darwin\n"
+            nnoremap <C-c> :.w !pbcopy<CR><CR>
+            inoremap <c-v> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
 
-if has("unix")
-    let s:uname = system("uname")
-    if s:uname == "Darwin\n"
-        " for mac os
-        set clipboard=unnamed
-        vmap y :w !pbcopy<CR><CR>
-        nmap yy :.w !pbcopy<CR><CR>
-        nmap p :r !pbpaste<CR><CR>
-    else
-        " for linux
-        inoremap <c-v> <C-r>+
-        imap <c-s> <Esc>:w<CR>
-        vnoremap <C-c> "+y
-        cnoremap <C-v> <C-r>"
+            " copy selected text but the whole line
+            vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
+        else
+            " for linux
+            inoremap <c-v> <C-r>+
+            imap <c-s> <Esc>:w<CR>
+            vnoremap <C-c> "+y
+            cnoremap <C-v> <C-r>"
+        endif
     endif
-endif
 
     " cno即cnoremap缩写
     cno $q <C-\>eDeleteTillSlash()<cr>
