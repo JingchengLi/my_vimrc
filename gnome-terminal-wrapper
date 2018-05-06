@@ -1,6 +1,0 @@
-#!/bin/bash
-#开启终端256色
-#打开gnome-terminal----编辑----配置文件首选项----标题和命令----(勾选)运行自定义命令而不是shell，
-#设置自定义命令：/home/ljc/.gnome-terminal-wrapper
-export TERM=xterm-256color
-exec $SHELL
