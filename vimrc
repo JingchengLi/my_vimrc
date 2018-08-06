@@ -211,7 +211,11 @@
 
 
     " 实现了CTRL-C、CTRL-V复制粘贴，CTRL-S保存操作的映射 {
-    set pastetoggle=<F10>
+    :map <F10> :set paste<CR>
+    :map <F11> :set nopaste<CR>
+    :imap <F10> <C-O>:set paste<CR>
+    :imap <F11> <C-O>:set nopaste<CR>
+    :set pastetoggle=<F11>
 
     if has("unix")
         let s:uname = system("uname")
@@ -223,7 +227,7 @@
             vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
         else
             " for linux
-            inoremap <c-v> <C-r>+
+            inoremap <c-v> <Esc>:set paste<CR>i<C-r>+<Esc>:set nopaste<CR>i
             imap <c-s> <Esc>:w<CR>
             vnoremap <C-c> "+y
             cnoremap <C-v> <C-r>"
@@ -409,4 +413,3 @@ endfunction
 
 "
 " }
-
