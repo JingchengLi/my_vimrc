@@ -108,84 +108,6 @@
                                    " (cleaner than default)
 " }
 
-" Plugin Settings {
-    " TagList Settings {
-        let Tlist_Auto_Open=0 " let the tag list open automagically
-        let Tlist_Compact_Format = 1 " show small menu
-        let Tlist_Ctags_Cmd = 'ctags' " location of ctags
-        let Tlist_Enable_Fold_Column = 0 " do show folding tree
-        let Tlist_Show_One_File = 1            "不同时显示多个文件的tag，只显示当前文件的
-        let Tlist_Exist_OnlyWindow = 1 " if you are the last, kill
-                                        " yourself
-        let Tlist_File_Fold_Auto_Close = 0 " fold closed other trees
-        let Tlist_Sort_Type = "name" " order by
-        let Tlist_Use_Right_Window = 1 " split to the right side
-                                        " of the screen
-        let Tlist_WinWidth = 30 " 40 cols wide, so i can (almost always)
-                                 " read my functions
-        let Tlist_Auto_Highlight_Tag = 1
-        "let Tlist_Auto_Update = 1
-        let Tlist_Close_On_Select = 0
-        let Tlist_Compact_Format = 0
-        let Tlist_Display_Prototype = 0
-        let Tlist_Display_Tag_Scope = 1
-        let Tlist_Enable_Fold_Column = 0
-        let Tlist_File_Fold_Auto_Close = 0
-        let Tlist_GainFocus_On_ToggleOpen = 1
-        let Tlist_Hightlight_Tag_On_BufEnter = 1
-        let Tlist_Inc_Winwidth = 0
-        let Tlist_Max_Submenu_Items = 1
-        let Tlist_Max_Tag_Length = 30
-        let Tlist_Process_File_Always = 0
-        let Tlist_Show_Menu = 0
-        let Tlist_Sort_Type = "order"
-        let Tlist_Use_Horiz_Window = 0
-
-        " Language Specifics {
-            " just functions and classes please
-            let tlist_aspjscript_settings = 'asp;f:function;c:class' 
-            " just functions and subs please
-            let tlist_aspvbs_settings = 'asp;f:function;s:sub' 
-            " don't show variables in freaking php
-            let tlist_php_settings = 'php;c:class;d:constant;f:function' 
-            " just functions and classes please
-            let tlist_vb_settings = 'asp;f:function;c:class' 
-            " }
-        " }
-    " lookupfile setting {
-        let g:LookupFile_MinPatLength = 2               "最少输入2个字符才开始查找
-        let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符串
-        let g:LookupFile_PreservePatternHistory = 1     "保存查找历史
-        let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项目
-        let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文件
-        if filereadable("./filenametags")                "设置tag文件的名字
-            let g:LookupFile_TagExpr = '"./filenametags"'
-        endif
-        " }
-    " Nerdtree settings {
-    " 让Tree把自己给装饰得多姿多彩漂亮点
-    let NERDChristmasTree=1
-    " 控制当光标移动超过一定距离时，是否自动将焦点调整到屏中心
-    let NERDTreeAutoCenter=1
-    " 指定书签文件
-    let NERDTreeBookmarksFile=$VIMFILES.'\NERDTree_bookmarks'
-    " 指定鼠标模式(1.双击打开 2.单目录双文件 3.单击打开)
-    let NERDTreeMouseMode=2
-    " 是否默认显示书签列表
-    let NERDTreeShowBookmarks=1
-    " 是否默认显示文件
-    let NERDTreeShowFiles=1
-    " 是否默认显示隐藏文件
-    let NERDTreeShowHidden=1
-    " 是否默认显示行号
-    let NERDTreeShowLineNumbers=0
-    " 窗口位置（'left' or 'right'）
-    let NERDTreeWinPos='left'
-    " 窗口宽度
-    let NERDTreeWinSize=31
-	" }
-" }
-
 " Map settings {
     " 自定义的键映射 {
     let mapleader = ","
@@ -215,7 +137,6 @@
     :map <F11> :set nopaste<CR>
     :imap <F10> <C-O>:set paste<CR>
     :imap <F11> <C-O>:set nopaste<CR>
-    :set pastetoggle=<F11>
 
     if has("unix")
         let s:uname = system("uname")
@@ -227,7 +148,7 @@
             vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
         else
             " for linux
-            inoremap <c-v> <Esc>:set paste<CR>i<C-r>+<Esc>:set nopaste<CR>i
+            inoremap <c-v> <F10><c-r>+<F11>
             imap <c-s> <Esc>:w<CR>
             vnoremap <C-c> "+y
             cnoremap <C-v> <C-r>"
@@ -319,62 +240,13 @@
     "inoremap $e ""<esc>i
     "inoremap $t <><esc>i
 	" }
-
-    " taglist plugin maps {
-    set tags+=./../tags,./../../tags,./../../../tags,./../../../../tags
-    nnoremap <leader>tl :TlistToggle<CR>
-	" }
-
-    " lookup plugin maps {
-    "映射LookupFile为,lk
-    nmap <silent> <leader>lk :LUTags<cr>
-    "映射LUBufs为,ll
-    nmap <silent> <leader>ll :LUBufs<cr>
-    "映射LUWalk为,lw
-    nmap <silent> <leader>lw :LUWalk<cr>
-	" nerdtree plugin maps
-    nnoremap <Leader>tt :NERDTree<CR>
-	" }
-
-    " 注释映射 {
-    nnoremap <leader>//   i/* [ jcli : <c-r>=strftime("%Y-%m-%d %H:%M:%S")<cr> ]  */<left><left><left>
-	" }
-    
-    " 在当前目录加载或卸载tags文件 {
-   	" cta 加载tags
-   	" ctd 卸载tags
-   	map cta :call Add_tags()<CR>
-   	map ctd :call Del_tags()<CR>
-   	function! Add_tags()
-   	    let dir =expand("%:p:h") 
-   	    let curtags = dir."/tags"
-   	    let curtags=substitute(curtags,'\\','\','g')
-   	    if filereadable(curtags)
-   	        exec "set tags+=".curtags
-   	        echohl WarningMsg | echo "Succ to add tags![".curtags."]" | echohl None
-   	    else
-   	        echohl WarningMsg | echo "Fail to add tags! No tags in this file's path.[".curtags."]" | echohl None
-   	    endif
-   	endfunction
-   	function! Del_tags()
-   	    let dir =expand("%:p:h") 
-   	    let curtags = dir."/tags"
-   	    let curtags=substitute(curtags,'\\','\','g')
-   	    exec "set tags-=".curtags
-   	    if filereadable(curtags)
-   	        echohl WarningMsg | echo "Succ to del tags![".curtags."]" | echohl None
-   	    else
-   	        echohl WarningMsg | echo "Succ to del tags! But no tags in this file's path.[".curtags."]" | echohl None
-   	    endif
-   	endfunction
-   		" }
-
+"    
 "
 " }
 "
 " {
 "
-
+"
 nnoremap <silent> <Leader>f :call Gather(input("Search for: "))<CR>
 nnoremap <silent> <Leader>F :call Gather(@/)<CR>
 nnoremap <silent> <Leader><Esc> :call CloseScratch()<CR>
