@@ -10,7 +10,7 @@
     au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
     set background=dark " we plan to use a dark background
-    syntax on " syntax highlighting on
+"    syntax on " syntax highlighting on
     set helplang=cn
 " }
 
@@ -27,14 +27,17 @@
 " }
 
 " Vim UI {
+    " performance
+    set ttyfast
+    set lazyredraw " do not redraw while running macros
+
     "colorscheme molokai
     "set cursorcolumn " highlight the current column
-    set cursorline " highlight current line
+    "set cursorline " highlight current line
 
     set incsearch " BUT do highlight as you type you
                    " search phrase
     set laststatus=2 " always show the status line
-    set lazyredraw " do not redraw while running macros
     set linespace=0 " don't insert any extra pixel lines
                      " betweens rows
     "set list " we do what to show tabs, to ensure we get them
@@ -81,15 +84,20 @@
                           " and let gq format comments
     set ignorecase " case insensitive by default
     set infercase " case inferred by default
-    set nowrap " do not wrap line
+    set wrap " wrap line
     set shiftround " when at 3 spaces, and I hit > ... go to 4, not 5
     set smartcase " if there are caps, go case-sensitive
-    set shiftwidth=4 " auto-indent amount when using cindent,
-                      " >>, << and stuff like that
     set softtabstop=4 " when hitting tab or backspace, how many spaces
                        "should a tab be (see expandtab)
     set tabstop=8 " real tabs should be 8, and they will show with
                    " set list on
+    set shiftwidth=4 " auto-indent amount when using cindent,
+                      " >>, << and stuff like that
+    "set autoindent    " turns it on
+    set smartindent   " does the right thing (mostly) in programs
+    set cindent       " stricter rules for C programs
+    set breakindent
+    set breakindentopt=shift:2
 " }
 
 " Folding {
@@ -131,26 +139,25 @@
     command W w !sudo tee % > /dev/null
     " }
 
-
-    " 实现了CTRL-C、CTRL-V复制粘贴，CTRL-S保存操作的映射 {
-    :map <F10> :set paste<CR>
-    :map <F11> :set nopaste<CR>
-    :imap <F10> <C-O>:set paste<CR>
-    :imap <F11> <C-O>:set nopaste<CR>
-
     if has("unix")
         let s:uname = system("uname")
         if s:uname == "Darwin\n"
-            nnoremap <C-c> :.w !pbcopy<CR><CR>
-            inoremap <c-v> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
-
-            " copy selected text but the whole line
-            vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
+           set clipboard^=unnamed
+           "inoremap <c-v> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
+           inoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
+           "cnoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
+           map <C-c> "+y<C-r>
+           "cnoremap <C-v> <c-r>+
+           "nnoremap <C-v> <c-r>+
+           "cnoremap <C-v> <C-r>"
+           "nnoremap <C-c> :.w !pbcopy<CR><CR>
+           "vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
         else
             " for linux
-            inoremap <c-v> <F10><c-r>+<F11>
+            "inoremap <c-v> <c-r>+
+            inoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
             imap <c-s> <Esc>:w<CR>
-            vnoremap <C-c> "+y
+            map <C-c> "+y<C-r>
             cnoremap <C-v> <C-r>"
         endif
     endif
@@ -239,11 +246,8 @@
     "inoremap $q ''<esc>i
     "inoremap $e ""<esc>i
     "inoremap $t <><esc>i
-	" }
-"    
-"
-" }
-"
+    " }
+    
 " {
 "
 "
@@ -282,6 +286,36 @@ function! CloseScratch()
   endif
   return 0
 endfunction
+
+if &diff
+    " 新增的行
+    hi DiffAdd    ctermbg=235  ctermfg=108  guibg=#262626 guifg=#87af87 cterm=reverse gui=reverse
+    " 变化的行
+    hi DiffChange ctermbg=235  ctermfg=103  guibg=#262626 guifg=#8787af cterm=reverse gui=reverse
+    " 删除的行
+    hi DiffDelete ctermbg=235  ctermfg=131  guibg=#262626 guifg=#af5f5f cterm=reverse gui=reverse
+    " 变化的文字
+    hi DiffText   ctermbg=235  ctermfg=208  guibg=#262626 guifg=#ff8700 cterm=reverse gui=reverse
+
+    map gs :call IwhiteToggle()<CR>
+    function! IwhiteToggle()
+      if &diffopt =~ 'iwhite'
+        set diffopt-=iwhite
+      else
+        set diffopt+=iwhite
+      endif
+    endfunction
+endif
+
+" https://vim.fandom.com/wiki/Autocomplete_with_TAB_when_typing_words
+function! Tab_Or_Complete()
+  if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
+    return "\<C-N>"
+  else
+    return "\<Tab>"
+  endif
+endfunction
+:inoremap <Tab> <C-R>=Tab_Or_Complete()<CR>
 
 "
 " }
