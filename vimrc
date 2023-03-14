@@ -145,7 +145,7 @@
             if exists('g:IDEAVIM') || exists('g:loaded_ideavim')
                 " ideavim specific configurations
                 map <C-c> "+y<C-r>
-                map <C-v> "+p<C-r>
+                inoremap <C-v> "+p<C-r>
             else
                 " vim specific configurations
                 set clipboard^=unnamed
@@ -153,7 +153,7 @@
                 "inoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
                 "cnoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
                 map <C-c> "+y<C-r>
-                map <C-v> "+p<C-r>
+                inoremap <C-v> "+p<C-r>
                 "cnoremap <C-v> <c-r>+
                 "nnoremap <C-v> <c-r>+
                 "cnoremap <C-v> <C-r>"
