@@ -49,7 +49,7 @@
     set hls
     set nostartofline " leave my cursor where it was
     set novisualbell " don't blink
-    set number " turn on line numbers
+    "set number " turn on line numbers
     set numberwidth=5 " We are good up to 99999 lines
     set report=0 " tell us when anything is changed via :...
     set ruler " Always show current positions along the bottom
@@ -138,20 +138,28 @@
     " (useful for handling the permission-denied error) {
     command W w !sudo tee % > /dev/null
     " }
-
+    
     if has("unix")
         let s:uname = system("uname")
         if s:uname == "Darwin\n"
-           set clipboard^=unnamed
-           "inoremap <c-v> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
-           inoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
-           "cnoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
-           map <C-c> "+y<C-r>
-           "cnoremap <C-v> <c-r>+
-           "nnoremap <C-v> <c-r>+
-           "cnoremap <C-v> <C-r>"
-           "nnoremap <C-c> :.w !pbcopy<CR><CR>
-           "vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
+            if exists('g:IDEAVIM') || exists('g:loaded_ideavim')
+                " ideavim specific configurations
+                map <C-c> "+y<C-r>
+                map <C-v> "+p<C-r>
+            else
+                " vim specific configurations
+                set clipboard^=unnamed
+                "inoremap <c-v> <Esc>:set paste<CR>:r !pbpaste<CR>:set nopaste<CR>
+                "inoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
+                "cnoremap <c-v> <C-O>:set paste<CR><c-r>+<C-O>:set nopaste<CR>
+                map <C-c> "+y<C-r>
+                map <C-v> "+p<C-r>
+                "cnoremap <C-v> <c-r>+
+                "nnoremap <C-v> <c-r>+
+                "cnoremap <C-v> <C-r>"
+                "nnoremap <C-c> :.w !pbcopy<CR><CR>
+                "vnoremap <c-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
+            endif
         else
             " for linux
             "inoremap <c-v> <c-r>+
